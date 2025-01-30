@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Billing System</title>
+    <style>
+     body {
+        font-family: Arial, sans-serif;
+        background-color: #100D18;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        flex-direction: column;
+        margin: 0;
+    }
+
+    .header-buttons {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        position: absolute;
+        top: 10px;
+        left: 0;
+    }
+    .header-buttons div button {
+    margin-right: 20px; /* Adds space between About Us and Contact Us buttons */
+}
+
+    .header-buttons button {
+        background-color: #2C2940;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        box-shadow: 0 0 8px #00ffcc, 0 0 15px #0077ff; /* Glow effect */
+        transition: background-color 0.3s, box-shadow 0.3s;
+    }
+
+    .header-buttons button:hover {
+        background-color: #00aaff;
+        box-shadow: 0 0 20px #00ffcc, 0 0 35px #00e5ff, 0 0 50px #0077ff;
+    }
+
+    .container {
+        background-color: #1E1B2D; /* Dark base color */
+        padding: 20px;
+        border-radius: 10px;
+        width: 450px;
+        text-align: center;
+        box-shadow: 0 0 10px #00ffcc, 0 0 15px #0077ff; /* Subtle default glow */
+        transition: background-color 0.3s, box-shadow 0.3s ease-in-out;
+        margin-top: 60px; /* Ensure content is below the header */
+    }
+
+    .container:hover {
+        background-color: #28233f; /* Slightly lighter dark shade */
+        box-shadow: 0 0 20px #00ffcc, 0 0 35px #00e5ff, 0 0 50px #0077ff, 0 0 65px #0044ff; /* Strong neon glow */
+    }
+
+    input, select, textarea {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #555;
+        border-radius: 5px;
+        background: #2C2940;
+        color: white;
+    }
+
+    input[type="button"] {
+        background-color: green;
+        color: white;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        border-radius: 5px;
+        width: 100%;
+        margin-top: 10px;
+    }
+    input[type="button"]:hover {
+        background-color: #28A745;
+    }
+
+    input[type="checkbox"] {
+        width: auto;
+        margin-right: 5px;
+    }
+
+    .gst-container {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        background: #2C2940;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 5px;
+    }
+
+    .gst-container label {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    h1 {
+        font-size: 28px;
+        color: #1DB954; /* Vibrant Green - represents power, energy, and technology */
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 10px;
+        text-shadow: 0 0 4px rgba(29, 185, 84, 0.6); /* Soft green glow */
+        transition: color 0.3s, text-shadow 0.3s ease-in-out;
+    }
+
+    h1:hover {
+        color: #ff4d00; /* Bold Orange-Red - adds a dynamic contrast on hover */
+        text-shadow: 0 0 6px rgba(255, 77, 0, 0.7); /* Slight fiery glow */
+    }
+
+    h2 { 
+        color: #00aaff; /* Bright Electric Blue - techy & eye-catching */
+        font-weight: bold;
+        text-shadow: 0 0 3px rgba(0, 170, 255, 0.5); /* Subtle glow */
+        transition: text-shadow 0.3s ease-in-out;
+    }
+
+    h2:hover {
+        text-shadow: 0 0 6px rgba(0, 170, 255, 1); /* Bright glow effect on hover */
+    }
+
+    h3 {
+        color: #ffcc00; /* Warm Yellow - good contrast on dark background */
+        font-weight: bold;
+        text-shadow: 0 0 3px rgba(255, 204, 0, 0.5); /* Light glow for readability */
+        transition: text-shadow 0.3s ease-in-out;
+    }
+
+    h3:hover {
+        text-shadow: 0 0 6px rgba(255, 204, 0, 1); /* Bright yellow glow on hover */
+    }
+
+    .gst-container label {
+        color: #00ffcc; /* Adding glow to GST options */
+        transition: color 0.3s ease-in-out;
+    }
+
+    .gst-container label:hover {
+        color: #00e5ff; /* Glow effect on hover */
+        text-shadow: 0 0 6px rgba(0, 229, 255, 1);
+    }
+
+</style>
+    <script>
+        const productPrices = {
+            "Mobile": 15000,
+            "Laptop": 50000,
+            "Tablet": 20000,
+            "SmartWatch": 1000,
+            "TV":40000
+        };
+
+        const updateGST = () => {
+            const product = document.getElementById("product").value;
+            const gst = document.getElementsByName("gst");
+            gst[0].checked = (product === "Mobile" || product === "Tablet" || product === "SmartWatch");
+            gst[1].checked = (product === "Laptop" || product === "TV");
+        };
+
+        const validateForm = () => {
+            const fname = document.getElementById("fname").value;
+            const mobile = document.getElementById("mobile").value;
+            const address = document.getElementById("address").value;
+            const product = document.getElementById("product").value;
+            const quantity = document.getElementById("qua").value;
+
+            if (!fname) {
+                alert("Please enter your full name.");
+                return false;
+            }
+            if (!mobile || isNaN(mobile) || mobile.length !== 10) {
+                alert("Please enter a valid 10-digit mobile number.");
+                return false;
+            }
+            if (!address) {
+                alert("Please enter your address.");
+                return false;
+            }
+            if (!product) {
+                alert("Please select a product.");
+                return false;
+            }
+            if (!quantity || quantity <= 0) {
+                alert("Please enter a valid quantity.");
+                return false;
+            }
+
+            return true;
+        };
+
+        const Calculator = () => {
+            if (!validateForm()) return;
+
+            const product = document.getElementById("product").value;
+            const quantity = document.getElementById("qua").value;
+            const gst = document.getElementsByName("gst");
+            let gstPercentage = 0;
+
+            for (let i = 0; i < gst.length; i++) {
+                if (gst[i].checked) gstPercentage = parseInt(gst[i].value);
+            }
+
+            if (productPrices[product]) {
+                const basePrice = productPrices[product] * quantity;
+                const gstAmount = (basePrice * gstPercentage) / 100;
+                const totalPrice = basePrice + gstAmount;
+                document.getElementById("Totalprice").value = totalPrice.toFixed(2);
+
+                const discountCheckbox = document.getElementById("discountCheckbox");
+                discountCheckbox.disabled = totalPrice <= 2000;
+                discountCheckbox.checked = false;
+                if (totalPrice <= 2000) document.getElementById("Finalprice").value = totalPrice.toFixed(2);
+            }
+        };
+
+        const check = () => {
+            const totalPrice = parseFloat(document.getElementById("Totalprice").value);
+            const discountCheckbox = document.getElementById("discountCheckbox");
+
+            if (discountCheckbox.checked) {
+                const discount = totalPrice * 0.05;
+                const finalPrice = totalPrice - discount;
+                document.getElementById("Finalprice").value = finalPrice.toFixed(2);
+            } else {
+                document.getElementById("Finalprice").value = totalPrice.toFixed(2);
+            }
+        };
+
+      const generateBill = () => {
+    if (!validateForm()) return;
+
+    const customerName = document.getElementById("fname").value;
+    const mobileNumber = document.getElementById("mobile").value;
+    const address = document.getElementById("address").value;
+    const productName = document.getElementById("product").value;
+    const modelNumber = document.getElementById("model").value;
+    const quantity = document.getElementById("qua").value;
+    const pricePerProduct = productPrices[productName];
+    const gst = document.querySelector('input[name="gst"]:checked')?.value || "0";
+    const totalPrice = document.getElementById("Totalprice").value;
+    const finalPrice = document.getElementById("Finalprice").value;
+
+    const billWindow = window.open('', '', 'height=600, width=700');
+    
+    billWindow.document.write(`
+        <html>
+        <head>
+            <title>Customer Invoice - JK Electronics</title>
+            <style>
+                @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+                body {
+                    font-family: 'Times New Roman', sans-serif;
+                    background-color: #0A0A0A;
+                    color: #FFFFFF;
+                    text-align: center;
+                    padding: 20px;
+                    margin: 0;
+                }
+                .bill-container {
+                    width: 90%;
+                    max-width: 600px;
+                    background: rgba(20, 20, 20, 0.8);
+                    padding: 25px;
+                    margin: 0 auto;
+                    border-radius: 15px;
+                    box-shadow: 0 0 15px cyan;
+                    border: 2px solid cyan;
+                    text-align: left;
+                }
+                h2, h3 {
+                    text-align: center;
+                    text-transform: uppercase;
+                    letter-spacing: 2px;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 10px;
+                    background: transparent;
+                }
+                th, td {
+                    padding: 12px;
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    text-align: left;
+                    color: #fff;
+                }
+                .total, .final-price {
+                    font-weight: bold;
+                    text-align: right;
+                    font-size: 1.1em;
+                    text-shadow: 0 0 5px cyan;
+                }
+                .footer {
+                    text-align: center;
+                    margin-top: 20px;
+                    font-size: 14px;
+                    color: #bbb;
+                }
+                button {
+                    display: block;
+                    margin: 20px auto;
+                    padding: 12px 24px;
+                    background: cyan;
+                    color: #0A0A0A;
+                    border: none;
+                    cursor: pointer;
+                    font-size: 16px;
+                    font-weight: bold;
+                    transition: 0.3s ease-in-out;
+                    text-transform: uppercase;
+                    border-radius: 5px;
+                    box-shadow: 0 0 10px cyan;
+                }
+                button:hover {
+                    background: white;
+                    color: black;
+                    box-shadow: 0 0 20px cyan;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="bill-container">
+                <h2>JK Electronics</h2>
+                <h3>Invoice</h3>
+                
+                <p><strong>Name:</strong> ${customerName}</p>
+                <p><strong>Mobile:</strong> ${mobileNumber}</p>
+                <p><strong>Address:</strong> ${address}</p>
+                
+                <table>
+                    <tr><th>Product</th><td>${productName}</td></tr>
+                    <tr><th>Model</th><td>${modelNumber}</td></tr>
+                    <tr><th>Quantity</th><td>${quantity}</td></tr>
+                    <tr><th>Price/Unit</th><td>₹${pricePerProduct}</td></tr>
+                    <tr><th>GST</th><td>${gst}%</td></tr>
+                    <tr class="total"><th>Total</th><td>₹${totalPrice}</td></tr>
+                    <tr class="final-price"><th>Final Price</th><td>₹${finalPrice}</td></tr>
+                </table>
+
+                <div class="footer">
+                    <p>Thank you for shopping with us!</p>
+                    <p>Rajapeth, Amravati</p>
+                </div>
+                
+                <button onclick="window.print()">Print Invoice</button>
+            </div>
+        </body>
+        </html>
+    `);
+    billWindow.document.close();
+};
+
+
+
+    </script>
+</head>
+<body>
+    <div class="header-buttons">
+        <button id="homeBtn">Home</button>
+        <div>
+            <button id="aboutUsBtn">About Us</button>
+            <button id="contactUsBtn">Contact Us</button>
+        </div>
+    </div>
+    <div class="container">
+        <h1>Customer Billing System</h1>
+        <h2>JK Electronic Shop</h2>
+
+        <h3>Customer Details:</h3>
+        <input type="text" id="fname" placeholder="Full Name">
+        <input type="text" id="mobile" placeholder="Mobile Number">
+        <textarea id="address" placeholder="Address"></textarea>
+
+        <h3>Product Details:</h3>
+        <select id="product" onchange="updateGST()">
+            <option value="">--Select Product--</option>
+            <option value="Mobile">Mobile</option>
+            <option value="Laptop">Laptop</option>
+            <option value="Tablet">Tablet</option>
+            <option value="SmartWatch">SmartWatch</option>
+            <option value="TV">TV</option>
+        </select>
+        <input type="text" id="model" placeholder="Model Number">
+        <input type="number" id="qua" placeholder="Enter Quantity">
+
+        <h3>Apply GST:</h3>
+        <div class="gst-container">
+            <label><input type="radio" name="gst" value="5"> 5%</label>
+            <label><input type="radio" name="gst" value="15"> 15%</label>
+        </div>
+
+        <input type="button" value="Calculate Price" onclick="Calculator()">
+        <input type="text" id="Totalprice" readonly placeholder="Total Price">
+
+        <input type="checkbox" id="discountCheckbox" onclick="check()" disabled>
+        <label>Get 5% off</label>
+
+        <input type="text" id="Finalprice" readonly placeholder="Final Price">
+        <input type="button" value="Generate Bill" onclick="generateBill()">
+    </div>
+</body>
+</html>
